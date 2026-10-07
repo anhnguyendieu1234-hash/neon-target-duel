@@ -371,20 +371,7 @@ function showHitEffect(x, y) {
     effect.remove();
   }, 800);
 }
-  const effect = document.createElement("div");
 
-  effect.className = "hitEffect";
-  effect.textContent = "✨";
-
-  effect.style.left = `${x * 100}%`;
-  effect.style.top = `${y * 100}%`;
-
-  gameArea.appendChild(effect);
-
-  setTimeout(() => {
-    effect.remove();
-  }, 700);
-}
 
 
 // =========================
