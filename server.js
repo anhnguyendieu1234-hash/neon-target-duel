@@ -14,7 +14,7 @@ const TOTAL_LEVELS = 3;
 const SHOTS_PER_PLAYER = 3;
 
 function getTarget(level, elapsed) {
-  const speed = 0.00045 + level * 0.00012;
+ const speed = 0.00065 + level * 0.00015;
 
   const x = 0.5 + Math.sin(elapsed * speed) * 0.20;
   const y = 0.5 + Math.cos(elapsed * speed * 1.1) * 0.14;
