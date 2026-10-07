@@ -40,7 +40,9 @@ function getTarget(level, elapsed) {
 // DIỆN TÍCH TRÚNG
 // =========================
 function getTargetRadius(level) {
-  return 0.45;
+  if (level === 1) return 0.09;
+  if (level === 2) return 0.075;
+  return 0.06;
 }
 
 function createRoom(code) {
