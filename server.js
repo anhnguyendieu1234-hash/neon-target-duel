@@ -14,7 +14,7 @@ const TOTAL_LEVELS = 3;
 const SHOTS_PER_PLAYER = 3;
 
 function getTarget(level, elapsed) {
- const speed = 0.0008 + level * 0.0004;
+const speed = 0.0015 + level * 0.0008;
 
   const x = 0.5 + Math.sin(elapsed * speed) * 0.20;
   const y = 0.5 + Math.cos(elapsed * speed * 1.1) * 0.14;
@@ -23,9 +23,7 @@ function getTarget(level, elapsed) {
 }
 
 function getTargetRadius(level) {
-  if (level === 1) return 0.20;
-  if (level === 2) return 0.18;
-  return 0.16;
+  return 0.30;
 }
 
 function createRoom(code) {
