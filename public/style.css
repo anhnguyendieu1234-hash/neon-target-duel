@@ -292,3 +292,39 @@ button {
     min-height: 350px;
   }
 }
+
+.hitEffect {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 65px;
+  pointer-events: none;
+  z-index: 20;
+  animation: brightHit 0.8s ease-out forwards;
+  filter:
+    drop-shadow(0 0 5px white)
+    drop-shadow(0 0 15px #ffe600)
+    drop-shadow(0 0 30px #ff8c00)
+    drop-shadow(0 0 50px #ff4fd8);
+}
+
+@keyframes brightHit {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.3);
+  }
+}
