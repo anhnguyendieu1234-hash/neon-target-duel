@@ -251,13 +251,13 @@ function startTargetAnimation(room) {
 
     const level = currentRoom.level;
 
-    const speed = 0.0015 + level * 0.0008;
+   const speed = 0.00045 + level * 0.00012;
 
-    const x =
-      0.5 + Math.sin(elapsed * speed) * 0.35;
+const x =
+  0.5 + Math.sin(elapsed * speed) * 0.20;
 
-    const y =
-      0.5 + Math.cos(elapsed * speed * 1.3) * 0.25;
+const y =
+  0.5 + Math.cos(elapsed * speed * 1.1) * 0.14;
 
     target.style.left = `${x * 100}%`;
     target.style.top = `${y * 100}%`;
@@ -357,6 +357,20 @@ socket.on("shotResult", data => {
 // =========================
 
 function showHitEffect(x, y) {
+  const effect = document.createElement("div");
+
+  effect.className = "hitEffect";
+  effect.textContent = "💥✨";
+
+  effect.style.left = `${x * 100}%`;
+  effect.style.top = `${y * 100}%`;
+
+  gameArea.appendChild(effect);
+
+  setTimeout(() => {
+    effect.remove();
+  }, 800);
+}
   const effect = document.createElement("div");
 
   effect.className = "hitEffect";
