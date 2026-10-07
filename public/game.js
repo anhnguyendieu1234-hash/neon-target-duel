@@ -7,22 +7,42 @@ let selectedColor = "#00bfff";
 let myShots = 0;
 let animationId = null;
 
+// =========================
+// MÀN HÌNH
+// =========================
+
 const setupScreen = document.getElementById("setupScreen");
 const waitingScreen = document.getElementById("waitingScreen");
 const gameScreen = document.getElementById("gameScreen");
 const resultScreen = document.getElementById("resultScreen");
 
+// =========================
+// INPUT
+// =========================
+
 const nameInput = document.getElementById("nameInput");
 const roomInput = document.getElementById("roomInput");
 const errorText = document.getElementById("errorText");
+
+// =========================
+// BUTTON
+// =========================
 
 const createBtn = document.getElementById("createBtn");
 const joinBtn = document.getElementById("joinBtn");
 const startBtn = document.getElementById("startBtn");
 const restartBtn = document.getElementById("restartBtn");
 
+// =========================
+// PHÒNG
+// =========================
+
 const roomCodeText = document.getElementById("roomCode");
 const playersList = document.getElementById("playersList");
+
+// =========================
+// GAME
+// =========================
 
 const gameArea = document.getElementById("gameArea");
 const target = document.getElementById("target");
@@ -31,168 +51,237 @@ const levelText = document.getElementById("levelText");
 const shotsText = document.getElementById("shotsText");
 const gameMessage = document.getElementById("gameMessage");
 
+// =========================
+// PLAYER
+// =========================
+
 const player1Name = document.getElementById("player1Name");
 const player2Name = document.getElementById("player2Name");
+
 const player1Helmet = document.getElementById("player1Helmet");
 const player2Helmet = document.getElementById("player2Helmet");
+
 const player1Score = document.getElementById("player1Score");
 const player2Score = document.getElementById("player2Score");
 
-const resultText = document.getElementById("resultText");
+// =========================
+// RESULT
+// =========================
 
+const resultText = document.getElementById("resultText");
 
 // =========================
 // CHỌN MŨ
 // =========================
 
-document.querySelectorAll("#helmetOptions .option").forEach(button => {
-  button.addEventListener("click", () => {
-    document
-      .querySelectorAll("#helmetOptions .option")
-      .forEach(b => b.classList.remove("selected"));
+document
+  .querySelectorAll("#helmetOptions .option")
+  .forEach(button => {
 
-    button.classList.add("selected");
-    selectedHelmet = button.dataset.helmet;
+    button.addEventListener("click", () => {
+
+      document
+        .querySelectorAll("#helmetOptions .option")
+        .forEach(b => {
+          b.classList.remove("selected");
+        });
+
+      button.classList.add("selected");
+
+      selectedHelmet = button.dataset.helmet;
+    });
+
   });
-});
-
 
 // =========================
 // CHỌN MÀU
 // =========================
 
-document.querySelectorAll("#colorOptions .color").forEach(button => {
-  button.addEventListener("click", () => {
-    document
-      .querySelectorAll("#colorOptions .color")
-      .forEach(b => b.classList.remove("selected"));
+document
+  .querySelectorAll("#colorOptions .color")
+  .forEach(button => {
 
-    button.classList.add("selected");
-    selectedColor = button.dataset.color;
+    button.addEventListener("click", () => {
+
+      document
+        .querySelectorAll("#colorOptions .color")
+        .forEach(b => {
+          b.classList.remove("selected");
+        });
+
+      button.classList.add("selected");
+
+      selectedColor = button.dataset.color;
+    });
+
   });
-});
-
 
 // =========================
-// KIỂM TRA TÊN
+// LẤY TÊN
 // =========================
 
 function getName() {
+
   const name = nameInput.value.trim();
 
   if (!name) {
-    errorText.textContent = "Em chưa nhập tên.";
+
+    errorText.textContent =
+      "Em chưa nhập tên.";
+
     return null;
   }
 
   errorText.textContent = "";
+
   return name;
 }
-
 
 // =========================
 // TẠO PHÒNG
 // =========================
 
 createBtn.addEventListener("click", () => {
+
   const name = getName();
 
   if (!name) return;
 
   socket.emit("createRoom", {
+
     name,
     helmet: selectedHelmet,
     color: selectedColor
-  });
-});
 
+  });
+
+});
 
 // =========================
 // VÀO PHÒNG
 // =========================
 
 joinBtn.addEventListener("click", () => {
+
   const name = getName();
 
   if (!name) return;
 
-  const code = roomInput.value.trim();
+  const code =
+    roomInput.value.trim();
 
   if (!code) {
-    errorText.textContent = "Em chưa nhập mã phòng.";
+
+    errorText.textContent =
+      "Em chưa nhập mã phòng.";
+
     return;
   }
 
   socket.emit("joinRoom", {
+
     code,
     name,
     helmet: selectedHelmet,
     color: selectedColor
-  });
-});
 
+  });
+
+});
 
 // =========================
 // PHÒNG ĐƯỢC TẠO
 // =========================
 
 socket.on("roomCreated", data => {
-  roomCodeText.textContent = data.code;
-});
 
+  roomCodeText.textContent =
+    data.code;
+
+});
 
 // =========================
 // CẬP NHẬT PHÒNG
 // =========================
 
 socket.on("roomState", room => {
+
   currentRoom = room;
 
   updatePlayers(room);
 
+  // =========================
+  // PHÒNG CHỜ
+  // =========================
+
   if (!room.started && !room.finished) {
+
     showScreen(waitingScreen);
 
-    roomCodeText.textContent = room.code;
+    roomCodeText.textContent =
+      room.code;
 
-    startBtn.disabled = room.players.length !== 2;
+    startBtn.disabled =
+      room.players.length !== 2;
 
     if (room.players.length === 1) {
-      startBtn.textContent = "Đang chờ người chơi...";
+
+      startBtn.textContent =
+        "Đang chờ người chơi...";
+
     } else {
-      startBtn.textContent = "Bắt đầu";
+
+      startBtn.textContent =
+        "Bắt đầu";
     }
   }
 
+  // =========================
+  // GAME ĐANG CHẠY
+  // =========================
+
   if (room.started) {
+
     showScreen(gameScreen);
 
-    levelText.textContent = room.level;
+    levelText.textContent =
+      room.level;
 
-    const me = room.players.find(p => p.id === myPlayerId);
+    const me =
+      room.players.find(
+        p => p.id === myPlayerId
+      );
 
     if (me) {
+
       myShots = me.shots;
-      shotsText.textContent = `${me.shots}/3`;
+
+      shotsText.textContent =
+        `${me.shots}/3`;
     }
 
     updatePlayers(room);
+
     startTargetAnimation(room);
   }
+
 });
 
-
 // =========================
-// CẬP NHẬT NGƯỜI CHƠI
+// CẬP NHẬT PLAYER
 // =========================
 
 function updatePlayers(room) {
+
   playersList.innerHTML = "";
 
   room.players.forEach((player, index) => {
-    const div = document.createElement("div");
 
-    div.className = "playerWaiting";
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "playerWaiting";
 
     div.innerHTML = `
       ${player.helmet}
@@ -203,277 +292,490 @@ function updatePlayers(room) {
     playersList.appendChild(div);
 
     if (index === 0) {
-      player1Name.textContent = player.name;
-      player1Helmet.textContent = player.helmet;
-      player1Score.textContent = player.score;
+
+      player1Name.textContent =
+        player.name;
+
+      player1Helmet.textContent =
+        player.helmet;
+
+      player1Score.textContent =
+        player.score;
     }
 
     if (index === 1) {
-      player2Name.textContent = player.name;
-      player2Helmet.textContent = player.helmet;
-      player2Score.textContent = player.score;
+
+      player2Name.textContent =
+        player.name;
+
+      player2Helmet.textContent =
+        player.helmet;
+
+      player2Score.textContent =
+        player.score;
     }
+
   });
 
   if (room.players.length < 2) {
-    player2Name.textContent = "Đang chờ...";
-    player2Helmet.textContent = "❔";
-    player2Score.textContent = "0";
-  }
-}
 
+    player2Name.textContent =
+      "Đang chờ...";
+
+    player2Helmet.textContent =
+      "❔";
+
+    player2Score.textContent =
+      "0";
+  }
+
+}
 
 // =========================
 // BẮT ĐẦU GAME
 // =========================
 
 startBtn.addEventListener("click", () => {
-  if (!currentRoom || currentRoom.players.length !== 2) return;
+
+  if (
+    !currentRoom ||
+    currentRoom.players.length !== 2
+  ) {
+    return;
+  }
 
   socket.emit("startGame");
+
 });
 
-
 // =========================
-// ANIMATION MỤC TIÊU
+// DI CHUYỂN MỤC TIÊU
 // =========================
 
 function startTargetAnimation(room) {
+
   if (animationId) {
-    cancelAnimationFrame(animationId);
+
+    cancelAnimationFrame(
+      animationId
+    );
   }
 
   function animate() {
-    if (!currentRoom || !currentRoom.started) return;
+
+    if (
+      !currentRoom ||
+      !currentRoom.started
+    ) {
+      return;
+    }
 
     const elapsed =
-      Date.now() - currentRoom.levelStartedAt;
+      Date.now() -
+      currentRoom.levelStartedAt;
 
-    const level = currentRoom.level;
+    const level =
+      currentRoom.level;
 
-   const speed = 0.00065 + level * 0.00015;
+    // =========================
+    // TỐC ĐỘ TĂNG RẤT RÕ QUA TỪNG MÀN
+    // =========================
 
-const x =
-  0.5 + Math.sin(elapsed * speed) * 0.20;
+    let speed;
 
-const y =
-  0.5 + Math.cos(elapsed * speed * 1.1) * 0.14;
+    if (level === 1) {
 
-    target.style.left = `${x * 100}%`;
-    target.style.top = `${y * 100}%`;
+      speed = 0.005;
 
-    animationId = requestAnimationFrame(animate);
+    } else if (level === 2) {
+
+      speed = 0.010;
+
+    } else {
+
+      speed = 0.016;
+    }
+
+    // =========================
+    // VỊ TRÍ MỤC TIÊU
+    // =========================
+
+    const x =
+      0.5 +
+      Math.sin(elapsed * speed) *
+      0.20;
+
+    const y =
+      0.5 +
+      Math.cos(elapsed * speed * 1.1) *
+      0.14;
+
+    target.style.left =
+      `${x * 100}%`;
+
+    target.style.top =
+      `${y * 100}%`;
+
+    animationId =
+      requestAnimationFrame(
+        animate
+      );
   }
 
   animate();
 }
 
-
 // =========================
-// CLICK / CHẠM MỤC TIÊU
+// CLICK / CHẠM ĐỂ NÉM NĂNG LƯỢNG
 // =========================
 
-gameArea.addEventListener("pointerdown", event => {
-  if (!currentRoom || !currentRoom.started) return;
+gameArea.addEventListener(
+  "pointerdown",
+  event => {
 
-  if (myShots >= 3) {
-    gameMessage.textContent =
-      "Em đã dùng hết 3 lượt. Chờ người chơi còn lại.";
-    return;
+    if (
+      !currentRoom ||
+      !currentRoom.started
+    ) {
+      return;
+    }
+
+    if (myShots >= 3) {
+
+      gameMessage.textContent =
+        "Em đã dùng hết 3 lượt. Chờ người chơi còn lại.";
+
+      return;
+    }
+
+    const rect =
+      gameArea.getBoundingClientRect();
+
+    const x =
+      (event.clientX - rect.left) /
+      rect.width;
+
+    const y =
+      (event.clientY - rect.top) /
+      rect.height;
+
+    createEnergyEffect(x, y);
+
+    socket.emit("shoot", {
+      x,
+      y
+    });
+
   }
-
-  const rect = gameArea.getBoundingClientRect();
-
-  const x =
-    (event.clientX - rect.left) / rect.width;
-
-  const y =
-    (event.clientY - rect.top) / rect.height;
-
-  createEnergyEffect(x, y);
-
-  socket.emit("shoot", {
-    x,
-    y
-  });
-});
-
+);
 
 // =========================
 // HIỆU ỨNG NĂNG LƯỢNG
 // =========================
 
 function createEnergyEffect(x, y) {
-  const energy = document.createElement("div");
 
-  energy.className = "energy";
+  const energy =
+    document.createElement("div");
 
-  energy.style.left = `${x * 100}%`;
-  energy.style.top = `${y * 100}%`;
-  energy.style.background = selectedColor;
+  energy.className =
+    "energy";
+
+  energy.style.left =
+    `${x * 100}%`;
+
+  energy.style.top =
+    `${y * 100}%`;
+
+  energy.style.background =
+    selectedColor;
+
   energy.style.boxShadow =
-    `0 0 15px ${selectedColor}, 0 0 35px ${selectedColor}`;
+    `0 0 15px ${selectedColor},
+     0 0 35px ${selectedColor}`;
 
-  gameArea.appendChild(energy);
+  gameArea.appendChild(
+    energy
+  );
 
   setTimeout(() => {
-    energy.remove();
-  }, 500);
-}
 
+    energy.remove();
+
+  }, 500);
+
+}
 
 // =========================
 // KẾT QUẢ NÉM
 // =========================
 
 socket.on("shotResult", data => {
+
   if (!currentRoom) return;
 
-  if (data.playerId === myPlayerId) {
-    myShots = data.playerShots;
-    shotsText.textContent = `${myShots}/3`;
+  // =========================
+  // CẬP NHẬT LƯỢT CỦA MÌNH
+  // =========================
+
+  if (
+    data.playerId ===
+    myPlayerId
+  ) {
+
+    myShots =
+      data.playerShots;
+
+    shotsText.textContent =
+      `${myShots}/3`;
   }
+
+  // =========================
+  // TRÚNG
+  // =========================
 
   if (data.hit) {
-    showHitEffect(data.x, data.y);
 
-    if (data.playerId === myPlayerId) {
+    showHitEffect(
+      data.x,
+      data.y
+    );
+
+    if (
+      data.playerId ===
+      myPlayerId
+    ) {
+
       gameMessage.textContent =
         `🎯 Trúng! +${data.points} điểm!`;
+
     } else {
+
       gameMessage.textContent =
-        `🎯 ${getPlayerName(data.playerId)} đã trúng!`;
+        `🎯 ${getPlayerName(
+          data.playerId
+        )} đã trúng!`;
     }
-  } else {
-    if (data.playerId === myPlayerId) {
-      gameMessage.textContent = "❌ Trượt!";
+
+  }
+
+  // =========================
+  // TRƯỢT
+  // =========================
+
+  else {
+
+    if (
+      data.playerId ===
+      myPlayerId
+    ) {
+
+      gameMessage.textContent =
+        "❌ Trượt!";
     }
   }
+
 });
 
-
 // =========================
-// HIỆU ỨNG TRÚNG
+// HIỆU ỨNG TRÚNG BIA
 // =========================
 
 function showHitEffect(x, y) {
-  const effect = document.createElement("div");
 
-  effect.className = "hitEffect";
-  effect.textContent = "💥✨";
+  const effect =
+    document.createElement("div");
 
-  effect.style.left = `${x * 100}%`;
-  effect.style.top = `${y * 100}%`;
+  effect.className =
+    "hitEffect";
 
-  gameArea.appendChild(effect);
+  effect.textContent =
+    "💥✨";
+
+  effect.style.left =
+    `${x * 100}%`;
+
+  effect.style.top =
+    `${y * 100}%`;
+
+  gameArea.appendChild(
+    effect
+  );
 
   setTimeout(() => {
+
     effect.remove();
+
   }, 800);
+
 }
-
-
 
 // =========================
 // GAME KẾT THÚC
 // =========================
 
 socket.on("gameFinished", data => {
+
   if (animationId) {
-    cancelAnimationFrame(animationId);
+
+    cancelAnimationFrame(
+      animationId
+    );
+
     animationId = null;
   }
 
-  showScreen(resultScreen);
+  showScreen(
+    resultScreen
+  );
 
-  const players = data.players;
+  const players =
+    data.players;
 
-  const p1 = players[0];
-  const p2 = players[1];
+  const p1 =
+    players[0];
+
+  const p2 =
+    players[1];
 
   let winnerText;
 
-  if (data.winner === "draw") {
-    winnerText = "🤝 HAI NGƯỜI HÒA NHAU!";
+  if (
+    data.winner === "draw"
+  ) {
+
+    winnerText =
+      "🤝 HAI NGƯỜI HÒA NHAU!";
+
   } else {
-    const winner = players.find(p => p.id === data.winner);
-    winnerText = `🏆 ${escapeHtml(winner.name)} THẮNG!`;
+
+    const winner =
+      players.find(
+        p => p.id === data.winner
+      );
+
+    winnerText =
+      `🏆 ${escapeHtml(
+        winner.name
+      )} THẮNG!`;
   }
 
   resultText.innerHTML = `
     <h2>${winnerText}</h2>
-    <p>${escapeHtml(p1.name)}: <strong>${p1.score}</strong> điểm</p>
-    <p>${escapeHtml(p2.name)}: <strong>${p2.score}</strong> điểm</p>
-  `;
-});
 
+    <p>
+      ${escapeHtml(p1.name)}:
+      <strong>${p1.score}</strong>
+      điểm
+    </p>
+
+    <p>
+      ${escapeHtml(p2.name)}:
+      <strong>${p2.score}</strong>
+      điểm
+    </p>
+  `;
+
+});
 
 // =========================
 // CHƠI LẠI
 // =========================
 
-restartBtn.addEventListener("click", () => {
-  socket.emit("restartGame");
-});
+restartBtn.addEventListener(
+  "click",
+  () => {
 
+    socket.emit(
+      "restartGame"
+    );
+
+  }
+);
 
 // =========================
 // LỖI
 // =========================
 
-socket.on("errorMessage", message => {
-  errorText.textContent = message;
-});
+socket.on(
+  "errorMessage",
+  message => {
 
+    errorText.textContent =
+      message;
+
+  }
+);
 
 // =========================
-// XÁC ĐỊNH ID CỦA MÌNH
+// KẾT NỐI
 // =========================
 
 socket.on("connect", () => {
-  myPlayerId = socket.id;
+
+  myPlayerId =
+    socket.id;
+
 });
 
-
 // =========================
-// CHUYỂN MÀN HÌNH
+// ĐỔI MÀN HÌNH
 // =========================
 
 function showScreen(screen) {
+
   [
     setupScreen,
     waitingScreen,
     gameScreen,
     resultScreen
+
   ].forEach(s => {
-    s.classList.add("hidden");
+
+    s.classList.add(
+      "hidden"
+    );
+
   });
 
-  screen.classList.remove("hidden");
+  screen.classList.remove(
+    "hidden"
+  );
+
 }
 
-
 // =========================
-// TÌM TÊN NGƯỜI CHƠI
+// LẤY TÊN PLAYER
 // =========================
 
 function getPlayerName(id) {
-  if (!currentRoom) return "Người chơi";
 
-  const player = currentRoom.players.find(
-    p => p.id === id
-  );
+  if (!currentRoom) {
 
-  return player ? player.name : "Người chơi";
+    return "Người chơi";
+  }
+
+  const player =
+    currentRoom.players.find(
+      p => p.id === id
+    );
+
+  return player
+    ? player.name
+    : "Người chơi";
 }
 
-
 // =========================
-// CHỐNG HTML LẠ
+// CHỐNG HTML
 // =========================
 
 function escapeHtml(text) {
-  const div = document.createElement("div");
-  div.textContent = text;
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text;
+
   return div.innerHTML;
 }
