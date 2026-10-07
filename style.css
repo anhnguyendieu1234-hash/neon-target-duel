@@ -1,0 +1,294 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: #080b18;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 1100px;
+  padding: 20px;
+}
+
+.screen {
+  text-align: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  margin-top: 25px;
+}
+
+input {
+  width: min(400px, 90%);
+  padding: 14px;
+  margin: 8px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.roomButtons {
+  margin-top: 25px;
+}
+
+.roomButtons button,
+#startBtn,
+#restartBtn {
+  padding: 14px 25px;
+  margin: 8px;
+  border-radius: 10px;
+  background: #684cff;
+  color: white;
+  font-size: 16px;
+}
+
+.roomButtons button:hover,
+#startBtn:hover,
+#restartBtn:hover {
+  transform: scale(1.05);
+}
+
+.options {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.option {
+  width: 65px;
+  height: 55px;
+  font-size: 30px;
+  border-radius: 12px;
+  background: #1a1f38;
+  border: 2px solid transparent;
+}
+
+.option.selected {
+  border-color: white;
+}
+
+.colors {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.color {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+}
+
+.color.selected {
+  border-color: white;
+  transform: scale(1.15);
+}
+
+.blue {
+  background: #00bfff;
+}
+
+.green {
+  background: #00ff66;
+}
+
+.red {
+  background: #ff3355;
+}
+
+.purple {
+  background: #b84dff;
+}
+
+.yellow {
+  background: #ffe600;
+}
+
+.orange {
+  background: #ff8c00;
+}
+
+.pink {
+  background: #ff4fd8;
+}
+
+.roomCode {
+  margin: 25px auto;
+  padding: 20px;
+  width: min(350px, 90%);
+  background: #141a32;
+  border-radius: 15px;
+  font-size: 20px;
+}
+
+.roomCode strong {
+  display: block;
+  font-size: 40px;
+  letter-spacing: 8px;
+  margin-top: 10px;
+}
+
+#playersList {
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+.playerWaiting {
+  background: #141a32;
+  padding: 15px;
+  margin: 8px;
+  border-radius: 10px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.playerBox,
+.levelBox {
+  background: #141a32;
+  padding: 12px 18px;
+  border-radius: 12px;
+}
+
+.playerBox strong {
+  display: block;
+  font-size: 24px;
+  margin-top: 5px;
+}
+
+.levelBox {
+  text-align: center;
+}
+
+#gameArea {
+  position: relative;
+  width: 100%;
+  height: min(65vh, 600px);
+  min-height: 400px;
+  background:
+    radial-gradient(circle at center, #151c3a 0%, #080b18 70%);
+  border: 2px solid #30385e;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+#target {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 70px;
+  user-select: none;
+  pointer-events: none;
+}
+
+#gameMessage {
+  font-size: 18px;
+}
+
+.energy {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: energyEffect 0.45s ease-out forwards;
+}
+
+@keyframes energyEffect {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(5);
+  }
+}
+
+.hitEffect {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: 35px;
+  pointer-events: none;
+  animation: hitEffect 0.6s ease-out forwards;
+}
+
+@keyframes hitEffect {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+  }
+}
+
+#resultText {
+  margin: 30px auto;
+  padding: 25px;
+  background: #141a32;
+  border-radius: 15px;
+  max-width: 500px;
+  font-size: 22px;
+}
+
+#errorText {
+  color: #ff5577;
+  min-height: 25px;
+}
+
+@media (max-width: 650px) {
+  h1 {
+    font-size: 30px;
+  }
+
+  .topBar {
+    flex-direction: column;
+  }
+
+  .playerBox,
+  .levelBox {
+    width: 100%;
+  }
+
+  #gameArea {
+    min-height: 350px;
+  }
+}

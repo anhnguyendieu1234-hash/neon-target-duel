@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Target Duel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+
+    <section id="setupScreen" class="screen">
+      <h1>⚡ NEON TARGET DUEL</h1>
+      <p>Đấu 2 người - ai ghi nhiều điểm hơn sẽ thắng!</p>
+
+      <input id="nameInput" type="text" placeholder="Nhập tên của em" maxlength="15">
+
+      <h3>Chọn mũ</h3>
+      <div class="options" id="helmetOptions">
+        <button class="option selected" data-helmet="🪖">🪖</button>
+        <button class="option" data-helmet="⛑️">⛑️</button>
+        <button class="option" data-helmet="🎩">🎩</button>
+        <button class="option" data-helmet="👑">👑</button>
+      </div>
+
+      <h3>Chọn màu năng lượng</h3>
+      <div class="colors" id="colorOptions">
+        <button class="color blue selected" data-color="#00bfff"></button>
+        <button class="color green" data-color="#00ff66"></button>
+        <button class="color red" data-color="#ff3355"></button>
+        <button class="color purple" data-color="#b84dff"></button>
+        <button class="color yellow" data-color="#ffe600"></button>
+        <button class="color orange" data-color="#ff8c00"></button>
+        <button class="color pink" data-color="#ff4fd8"></button>
+      </div>
+
+      <div class="roomButtons">
+        <button id="createBtn">Tạo phòng</button>
+        <button id="joinBtn">Vào phòng</button>
+      </div>
+
+      <input id="roomInput" type="text" placeholder="Nhập mã phòng">
+      <p id="errorText"></p>
+    </section>
+
+
+    <section id="waitingScreen" class="screen hidden">
+      <h1>🎮 Phòng chờ</h1>
+
+      <div class="roomCode">
+        Mã phòng:
+        <strong id="roomCode">-----</strong>
+      </div>
+
+      <p>Gửi mã này cho người chơi thứ 2.</p>
+
+      <div id="playersList"></div>
+
+      <button id="startBtn" disabled>Bắt đầu</button>
+    </section>
+
+
+    <section id="gameScreen" class="screen hidden">
+
+      <div class="topBar">
+        <div class="playerBox">
+          <span id="player1Helmet">🪖</span>
+          <span id="player1Name">Player 1</span>
+          <strong id="player1Score">0</strong>
+        </div>
+
+        <div class="levelBox">
+          <div>STAGE <span id="levelText">1</span>/3</div>
+          <div>🎯 Mỗi người: <span id="shotsText">0</span>/3</div>
+        </div>
+
+        <div class="playerBox">
+          <span id="player2Helmet">🪖</span>
+          <span id="player2Name">Player 2</span>
+          <strong id="player2Score">0</strong>
+        </div>
+      </div>
+
+      <div id="gameArea">
+        <div id="target">🎯</div>
+      </div>
+
+      <p id="gameMessage">Chạm vào mục tiêu để ném năng lượng!</p>
+
+    </section>
+
+
+    <section id="resultScreen" class="screen hidden">
+      <h1>🏆 KẾT QUẢ</h1>
+
+      <div id="resultText"></div>
+
+      <button id="restartBtn">Chơi lại</button>
+    </section>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
