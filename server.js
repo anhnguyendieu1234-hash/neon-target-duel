@@ -13,17 +13,34 @@ const rooms = new Map();
 const TOTAL_LEVELS = 3;
 const SHOTS_PER_PLAYER = 3;
 
+// =========================
+// TỐC ĐỘ MỤC TIÊU
+// =========================
 function getTarget(level, elapsed) {
-const speed = 0.0015 + level * 0.0008;
+  let speed;
 
-  const x = 0.5 + Math.sin(elapsed * speed) * 0.20;
-  const y = 0.5 + Math.cos(elapsed * speed * 1.1) * 0.14;
+  if (level === 1) {
+    speed = 0.005;
+  } else if (level === 2) {
+    speed = 0.010;
+  } else {
+    speed = 0.016;
+  }
+
+  const x =
+    0.5 + Math.sin(elapsed * speed) * 0.20;
+
+  const y =
+    0.5 + Math.cos(elapsed * speed * 1.1) * 0.14;
 
   return { x, y };
 }
 
+// =========================
+// DIỆN TÍCH TRÚNG
+// =========================
 function getTargetRadius(level) {
-  return 0.30;
+  return 0.45;
 }
 
 function createRoom(code) {
@@ -70,11 +87,13 @@ function checkLevelComplete(room) {
 
   if (room.level < TOTAL_LEVELS) {
     room.level++;
+
     room.players.forEach(p => {
       p.shots = 0;
     });
 
     room.levelStartedAt = Date.now();
+
     sendRoomState(room);
   } else {
     room.finished = true;
@@ -101,11 +120,18 @@ function checkLevelComplete(room) {
 }
 
 io.on("connection", socket => {
+
+  // =========================
+  // TẠO PHÒNG
+  // =========================
   socket.on("createRoom", ({ name, helmet, color }) => {
     let code;
 
     do {
-      code = Math.random().toString(36).substring(2, 7).toUpperCase();
+      code = Math.random()
+        .toString(36)
+        .substring(2, 7)
+        .toUpperCase();
     } while (rooms.has(code));
 
     const room = createRoom(code);
@@ -120,24 +146,37 @@ io.on("connection", socket => {
     });
 
     rooms.set(code, room);
+
     socket.join(code);
 
     socket.emit("roomCreated", { code });
+
     sendRoomState(room);
   });
 
+  // =========================
+  // VÀO PHÒNG
+  // =========================
   socket.on("joinRoom", ({ code, name, helmet, color }) => {
-    code = String(code || "").trim().toUpperCase();
+    code = String(code || "")
+      .trim()
+      .toUpperCase();
 
     const room = rooms.get(code);
 
     if (!room) {
-      socket.emit("errorMessage", "Không tìm thấy phòng.");
+      socket.emit(
+        "errorMessage",
+        "Không tìm thấy phòng."
+      );
       return;
     }
 
     if (room.players.length >= 2) {
-      socket.emit("errorMessage", "Phòng đã đủ 2 người.");
+      socket.emit(
+        "errorMessage",
+        "Phòng đã đủ 2 người."
+      );
       return;
     }
 
@@ -155,6 +194,9 @@ io.on("connection", socket => {
     sendRoomState(room);
   });
 
+  // =========================
+  // BẮT ĐẦU GAME
+  // =========================
   socket.on("startGame", () => {
     const room = [...rooms.values()].find(r =>
       r.players.some(p => p.id === socket.id)
@@ -175,22 +217,36 @@ io.on("connection", socket => {
     sendRoomState(room);
   });
 
+  // =========================
+  // NÉM NĂNG LƯỢNG
+  // =========================
   socket.on("shoot", ({ x, y }) => {
     const room = [...rooms.values()].find(r =>
       r.players.some(p => p.id === socket.id)
     );
 
-    if (!room || !room.started || room.finished) return;
+    if (!room || !room.started || room.finished) {
+      return;
+    }
 
-    const player = room.players.find(p => p.id === socket.id);
+    const player = room.players.find(
+      p => p.id === socket.id
+    );
 
-    if (!player || player.shots >= SHOTS_PER_PLAYER) return;
+    if (!player || player.shots >= SHOTS_PER_PLAYER) {
+      return;
+    }
 
     player.shots++;
 
-    const elapsed = Date.now() - room.levelStartedAt;
-    const target = getTarget(room.level, elapsed);
-    const radius = getTargetRadius(room.level);
+    const elapsed =
+      Date.now() - room.levelStartedAt;
+
+    const target =
+      getTarget(room.level, elapsed);
+
+    const radius =
+      getTargetRadius(room.level);
 
     const distance = Math.sqrt(
       Math.pow(x - target.x, 2) +
@@ -202,7 +258,13 @@ io.on("connection", socket => {
     let points = 0;
 
     if (hit) {
-      points = room.level === 1 ? 100 : room.level === 2 ? 150 : 200;
+      points =
+        room.level === 1
+          ? 100
+          : room.level === 2
+          ? 150
+          : 200;
+
       player.score += points;
     }
 
@@ -216,15 +278,21 @@ io.on("connection", socket => {
     });
 
     sendRoomState(room);
+
     checkLevelComplete(room);
   });
 
+  // =========================
+  // CHƠI LẠI
+  // =========================
   socket.on("restartGame", () => {
     const room = [...rooms.values()].find(r =>
       r.players.some(p => p.id === socket.id)
     );
 
-    if (!room || room.players.length !== 2) return;
+    if (!room || room.players.length !== 2) {
+      return;
+    }
 
     room.level = 1;
     room.started = true;
@@ -239,11 +307,19 @@ io.on("connection", socket => {
     sendRoomState(room);
   });
 
+  // =========================
+  // NGẮT KẾT NỐI
+  // =========================
   socket.on("disconnect", () => {
     for (const [code, room] of rooms) {
-      const index = room.players.findIndex(p => p.id === socket.id);
+
+      const index =
+        room.players.findIndex(
+          p => p.id === socket.id
+        );
 
       if (index !== -1) {
+
         room.players.splice(index, 1);
 
         if (room.players.length === 0) {
@@ -259,8 +335,14 @@ io.on("connection", socket => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
+// =========================
+// SERVER
+// =========================
+const PORT =
+  process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  console.log(`Game server running on port ${PORT}`);
+  console.log(
+    `Game server running on port ${PORT}`
+  );
 });
