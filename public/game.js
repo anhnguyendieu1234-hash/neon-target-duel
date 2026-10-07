@@ -384,17 +384,12 @@ function startTargetAnimation(room) {
     let speed;
 
     if (level === 1) {
-
-      speed = 0.005;
-
-    } else if (level === 2) {
-
-      speed = 0.010;
-
-    } else {
-
-      speed = 0.016;
-    }
+  speed = 0.005;
+} else if (level === 2) {
+  speed = 0.008;
+} else {
+  speed = 0.012;
+}
 
     // =========================
     // VỊ TRÍ MỤC TIÊU
