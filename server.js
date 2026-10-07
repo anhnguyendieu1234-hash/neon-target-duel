@@ -19,13 +19,13 @@ const SHOTS_PER_PLAYER = 3;
 function getTarget(level, elapsed) {
   let speed;
 
-  if (level === 1) {
-    speed = 0.005;
-  } else if (level === 2) {
-    speed = 0.010;
-  } else {
-    speed = 0.016;
-  }
+ if (level === 1) {
+  speed = 0.005;
+} else if (level === 2) {
+  speed = 0.008;
+} else {
+  speed = 0.012;
+}
 
   const x =
     0.5 + Math.sin(elapsed * speed) * 0.20;
@@ -40,9 +40,9 @@ function getTarget(level, elapsed) {
 // DIỆN TÍCH TRÚNG
 // =========================
 function getTargetRadius(level) {
-  if (level === 1) return 0.08;
-  if (level === 2) return 0.10;
-  return 0.12;
+  if (level === 1) return 0.14;
+  if (level === 2) return 0.16;
+  return 0.18;
 }
 
 function createRoom(code) {
