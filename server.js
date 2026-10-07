@@ -22,9 +22,9 @@ function getTarget(level, elapsed) {
 }
 
 function getTargetRadius(level) {
-  if (level === 1) return 0.085;
-  if (level === 2) return 0.065;
-  return 0.048;
+  if (level === 1) return 0.20;
+  if (level === 2) return 0.18;
+  return 0.16;
 }
 
 function createRoom(code) {
